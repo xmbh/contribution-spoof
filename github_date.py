@@ -3,7 +3,7 @@ import os
 import subprocess
 from pathlib import Path
 
-GITHUB_USER = "xmbh"
+GITHUB_USER = "YOUR USER"
 REPO_NAME = "contribution-spoof"
 COMMIT_DATE = "1970-01-01T12:00:00 +0000"
 
@@ -21,10 +21,8 @@ def main():
     print(f"Account: {GITHUB_USER}")
     print(f"Commit date: {COMMIT_DATE}")
 
-    # Verify GitHub authentication
     run("gh", "auth", "status")
 
-    # Verify account
     result = subprocess.run(
         ["gh", "api", "user", "--jq", ".login"],
         capture_output=True,
@@ -40,10 +38,8 @@ def main():
     REPO_DIR.mkdir()
     os.chdir(REPO_DIR)
 
-    # Initialize repository
     run("git", "init", "-b", "main")
 
-    # Create README
     Path("README.md").write_text(
         "# Contribution Graph\n\n"
         f"Historical commit: {COMMIT_DATE}\n",
@@ -52,14 +48,12 @@ def main():
 
     run("git", "add", "README.md")
 
-    # Set both Git timestamps
     env = os.environ.copy()
     env["GIT_AUTHOR_DATE"] = COMMIT_DATE
     env["GIT_COMMITTER_DATE"] = COMMIT_DATE
 
     run("git", "commit", "-m", "Historical commit", env=env)
 
-    # Create and push GitHub repository
     run(
         "gh", "repo", "create",
         f"{GITHUB_USER}/{REPO_NAME}",
